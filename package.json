@@ -6,14 +6,21 @@
   "author": "ai-electron",
   "license": "MIT",
   "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prestart": "npm run build",
+    "prepack": "npm run build",
+    "predist": "npm run build",
+    "prerelease": "npm run build",
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "release": "electron-builder --publish always"
   },
   "devDependencies": {
+    "@types/node": "^24.5.2",
     "electron": "^37.3.1",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.9.2"
   },
   "build": {
     "appId": "com.aielectron.jsonformatter",
