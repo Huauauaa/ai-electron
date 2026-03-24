@@ -6,7 +6,7 @@
 - JSON 压缩（去除空白）
 - JSON 校验（错误提示）
 - 一键复制结果
-- 打包产物：Windows（`exe`/`portable`）、macOS（`dmg`）
+- 打包产物：Windows（`exe`/`portable`）、macOS（`Intel x64` + `Apple Silicon arm64` 的 `dmg/zip`）
 
 ## 本地开发
 
@@ -30,8 +30,9 @@ npm run dist
 仓库已包含 `.github/workflows/release.yml`，在你推送 `v*` tag（如 `v1.0.0`）后会：
 
 1. 构建 Windows 安装包（exe）
-2. 构建 macOS 安装包（dmg）
-3. 自动创建/更新 GitHub Release 并上传产物
+2. 构建 macOS Intel（x64）安装包（dmg/zip）
+3. 构建 macOS Apple Silicon（arm64）安装包（dmg/zip）
+4. 自动创建/更新 GitHub Release 并上传产物
 
 ### 使用步骤
 
