@@ -2,28 +2,37 @@
   "name": "json-formatter-electron",
   "version": "1.0.0",
   "description": "A lightweight Electron app for JSON formatting",
-  "main": "src/main.js",
+  "main": "dist/main.js",
   "author": "ai-electron",
   "license": "MIT",
   "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prestart": "npm run build",
+    "prepack": "npm run build",
+    "predist": "npm run build",
+    "prerelease": "npm run build",
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "release": "electron-builder --publish always"
   },
   "devDependencies": {
+    "@types/node": "^24.5.2",
     "electron": "^37.3.1",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.9.2"
   },
   "build": {
     "appId": "com.aielectron.jsonformatter",
     "productName": "JSON Formatter",
     "directories": {
       "buildResources": "build",
-      "output": "dist"
+      "output": "release"
     },
     "files": [
-      "src/**/*",
+      "dist/**/*",
+      "src/index.html",
       "package.json"
     ],
     "asar": true,

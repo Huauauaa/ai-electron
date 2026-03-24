@@ -1,7 +1,7 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
+import { app, BrowserWindow } from "electron";
+import path from "path";
 
-function createWindow() {
+function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1100,
     height: 760,
@@ -10,11 +10,12 @@ function createWindow() {
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
-      nodeIntegration: false
-    }
+      nodeIntegration: false,
+    },
   });
 
-  mainWindow.loadFile(path.join(__dirname, "index.html"));
+  const indexPath = path.join(__dirname, "..", "src", "index.html");
+  mainWindow.loadFile(indexPath);
 }
 
 app.whenReady().then(() => {
