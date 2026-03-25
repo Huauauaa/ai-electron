@@ -7,7 +7,7 @@
       content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JSON 格式化</title>
+    <title>JSON 工具箱</title>
     <style>
       :root {
         color-scheme: light dark;
@@ -30,6 +30,26 @@
       h1 {
         margin: 0;
         font-size: 20px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+      }
+      .tab-btn {
+        background: #3d4250;
+      }
+      .tab-btn.active {
+        background: #4f7cff;
+      }
+      .panel {
+        display: none;
+        flex: 1;
+        min-height: 0;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .panel.active {
+        display: flex;
       }
       .toolbar {
         display: flex;
@@ -69,6 +89,31 @@
         flex: 1;
         min-height: 0;
       }
+      .cron-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(120px, 1fr));
+        gap: 10px;
+      }
+      .cron-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .cron-field label {
+        font-size: 12px;
+        color: #c9d1e2;
+      }
+      input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        background: #2a3040;
+        color: #f0f0f0;
+        border: 1px solid #3f4659;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+        font-size: 13px;
+      }
       textarea {
         width: 100%;
         height: 100%;
@@ -95,39 +140,120 @@
         .editor-wrap {
           grid-template-columns: 1fr;
         }
+        .cron-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        .cron-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>JSON 格式化</h1>
-      <div class="toolbar">
-        <button id="format-btn">格式化</button>
-        <button id="minify-btn">压缩</button>
-        <button id="copy-btn" class="secondary">复制结果</button>
-        <button id="clear-btn" class="secondary">清空</button>
-        <button id="sample-btn" class="secondary">示例</button>
-        <label for="indent">缩进</label>
-        <select id="indent">
-          <option value="2">2 空格</option>
-          <option value="4">4 空格</option>
-          <option value="8">8 空格</option>
-        </select>
+      <h1>JSON 工具箱</h1>
+      <div class="tabs">
+        <button id="tab-json" class="tab-btn active">JSON</button>
+        <button id="tab-cron" class="tab-btn">Cron</button>
       </div>
-      <div class="editor-wrap">
-        <textarea
-          id="input"
-          placeholder="在这里粘贴 JSON..."
-          spellcheck="false"
-        ></textarea>
-        <textarea
-          id="output"
-          placeholder="格式化结果会显示在这里..."
-          spellcheck="false"
-          readonly
-        ></textarea>
+      <div id="panel-json" class="panel active">
+        <div class="toolbar">
+          <button id="format-btn">格式化</button>
+          <button id="minify-btn">压缩</button>
+          <button id="copy-btn" class="secondary">复制结果</button>
+          <button id="clear-btn" class="secondary">清空</button>
+          <button id="sample-btn" class="secondary">示例</button>
+          <label for="indent">缩进</label>
+          <select id="indent">
+            <option value="2">2 空格</option>
+            <option value="4">4 空格</option>
+            <option value="8">8 空格</option>
+          </select>
+        </div>
+        <div class="editor-wrap">
+          <textarea
+            id="input"
+            placeholder="在这里粘贴 JSON..."
+            spellcheck="false"
+          ></textarea>
+          <textarea
+            id="output"
+            placeholder="格式化结果会显示在这里..."
+            spellcheck="false"
+            readonly
+          ></textarea>
+        </div>
+        <div id="status-json" class="status"></div>
       </div>
-      <div id="status" class="status"></div>
+      <div id="panel-cron" class="panel">
+        <div class="toolbar">
+          <input
+            id="cron-expression"
+            type="text"
+            placeholder="输入 cron 表达式，例如: */15 9-18 * * 1-5"
+            spellcheck="false"
+          />
+          <button id="cron-validate-btn">校验</button>
+          <button id="cron-preview-btn">未来 5 次</button>
+          <button id="cron-sample-btn" class="secondary">示例</button>
+          <button id="cron-clear-btn" class="secondary">清空</button>
+        </div>
+        <div class="cron-grid">
+          <div class="cron-field">
+            <label for="cron-minute">分钟 (0-59)</label>
+            <input id="cron-minute" type="text" value="*" spellcheck="false" />
+          </div>
+          <div class="cron-field">
+            <label for="cron-hour">小时 (0-23)</label>
+            <input id="cron-hour" type="text" value="*" spellcheck="false" />
+          </div>
+          <div class="cron-field">
+            <label for="cron-day-of-month">日期 (1-31)</label>
+            <input
+              id="cron-day-of-month"
+              type="text"
+              value="*"
+              spellcheck="false"
+            />
+          </div>
+          <div class="cron-field">
+            <label for="cron-month">月份 (1-12)</label>
+            <input id="cron-month" type="text" value="*" spellcheck="false" />
+          </div>
+          <div class="cron-field">
+            <label for="cron-day-of-week">星期 (0-7, 0/7=周日)</label>
+            <input
+              id="cron-day-of-week"
+              type="text"
+              value="*"
+              spellcheck="false"
+            />
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="cron-build-btn">从字段生成表达式</button>
+        </div>
+        <div class="editor-wrap">
+          <textarea
+            id="cron-output"
+            placeholder="解析说明与未来执行时间会显示在这里..."
+            spellcheck="false"
+            readonly
+          ></textarea>
+          <textarea
+            id="cron-notes"
+            placeholder="说明：支持标准 5 段 cron（分 时 日 月 周），支持 *, 范围(-), 列表(,), 步长(/)。"
+            spellcheck="false"
+            readonly
+          >说明：
+- 支持标准 5 段 cron：分 时 日 月 周
+- 支持通配符 *、范围 a-b、列表 a,b,c、步长 */n 或 a-b/n
+- 星期字段支持 0-7（0 和 7 都表示周日）</textarea>
+        </div>
+        <div id="status-cron" class="status"></div>
+      </div>
     </div>
     <script src="../dist/renderer.js"></script>
   </body>
