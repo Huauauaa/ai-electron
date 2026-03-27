@@ -10,65 +10,55 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: windows-latest
-            artifact_name: windows-x64
-            command: npm run dist -- --win --x64 --publish never
-            artifacts: dist/*.exe
-          - os: macos-13-large  # Changed from macos-13 to macos-13-large
-            artifact_name: macos-intel-x64
-            command: npm run dist -- --mac --x64 --publish never
-            artifacts: |
-              dist/*.dmg
-              dist/*.zip
-          - os: macos-latest
-            artifact_name: macos-arm64
-            command: npm run dist -- --mac --arm64 --publish never
-            artifacts: |
-              dist/*.dmg
-              dist/*.zip
-
-    runs-on: ${{ matrix.os }}
-
+  build-windows:
+    runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build installers
-        run: ${{ matrix.command }}
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - run: npm ci
+      - run: npm run dist -- --win --x64 --publish never
+      - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}-release-assets
-          path: ${{ matrix.artifacts }}
+          name: windows-x64-release-assets
+          path: dist/*.exe
+          if-no-files-found: error
+
+  build-macos-universal:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      
+      # Build universal binary (works on both Intel and Apple Silicon)
+      - name: Build macOS universal app
+        run: npm run dist -- --mac --universal --publish never
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-universal-release-assets
+          path: |
+            dist/*.dmg
+            dist/*.zip
           if-no-files-found: error
 
   release:
-    needs: build
+    needs: [build-windows, build-macos-universal]
     runs-on: ubuntu-latest
-
     steps:
-      - name: Download build artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: release-assets
           merge-multiple: true
-
-      - name: Publish release assets to current tag
+      
+      - name: Publish release assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
