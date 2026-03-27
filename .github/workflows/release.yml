@@ -19,7 +19,7 @@ jobs:
             artifact_name: windows-x64
             command: npm run dist -- --win --x64 --publish never
             artifacts: dist/*.exe
-          - os: macos-13
+          - os: macos-13-large  # Changed from macos-13 to macos-13-large
             artifact_name: macos-intel-x64
             command: npm run dist -- --mac --x64 --publish never
             artifacts: |
