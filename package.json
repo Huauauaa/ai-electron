@@ -17,6 +17,12 @@
     "dist": "electron-builder",
     "release": "electron-builder --publish always"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller"
+    ]
+  },
   "devDependencies": {
     "@types/node": "^24.5.2",
     "electron": "^37.3.1",
