@@ -7,156 +7,19 @@
       content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JSON 工具箱</title>
-    <style>
-      :root {
-        color-scheme: light dark;
-      }
-      body {
-        margin: 0;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #1f2430;
-        color: #e6e6e6;
-      }
-      .container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding: 16px;
-        box-sizing: border-box;
-        gap: 12px;
-      }
-      h1 {
-        margin: 0;
-        font-size: 20px;
-      }
-      .tabs {
-        display: flex;
-        gap: 8px;
-      }
-      .tab-btn {
-        background: #3d4250;
-      }
-      .tab-btn.active {
-        background: #4f7cff;
-      }
-      .panel {
-        display: none;
-        flex: 1;
-        min-height: 0;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .panel.active {
-        display: flex;
-      }
-      .toolbar {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      button {
-        border: none;
-        background: #4f7cff;
-        color: white;
-        border-radius: 6px;
-        padding: 8px 12px;
-        cursor: pointer;
-      }
-      button.secondary {
-        background: #3d4250;
-      }
-      button:hover {
-        opacity: 0.9;
-      }
-      .toolbar label {
-        font-size: 13px;
-        color: #c9d1e2;
-      }
-      select {
-        border: 1px solid #3f4659;
-        background: #2a3040;
-        color: #f0f0f0;
-        border-radius: 6px;
-        padding: 7px 10px;
-      }
-      .editor-wrap {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        flex: 1;
-        min-height: 0;
-      }
-      .cron-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(120px, 1fr));
-        gap: 10px;
-      }
-      .cron-field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .cron-field label {
-        font-size: 12px;
-        color: #c9d1e2;
-      }
-      input[type="text"] {
-        width: 100%;
-        box-sizing: border-box;
-        background: #2a3040;
-        color: #f0f0f0;
-        border: 1px solid #3f4659;
-        border-radius: 8px;
-        padding: 10px 12px;
-        font-family: "JetBrains Mono", "Fira Code", monospace;
-        font-size: 13px;
-      }
-      textarea {
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-        background: #2a3040;
-        color: #f0f0f0;
-        border: 1px solid #3f4659;
-        border-radius: 8px;
-        resize: none;
-        padding: 12px;
-        font-family: "JetBrains Mono", "Fira Code", monospace;
-        font-size: 13px;
-        line-height: 1.5;
-      }
-      .status {
-        min-height: 20px;
-        font-size: 13px;
-        color: #ffd166;
-      }
-      .status.ok {
-        color: #73e2a7;
-      }
-      @media (max-width: 900px) {
-        .editor-wrap {
-          grid-template-columns: 1fr;
-        }
-        .cron-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-      @media (max-width: 600px) {
-        .cron-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
+    <title>开发工具箱</title>
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="tools/json/json.css" />
+    <link rel="stylesheet" href="tools/cron/cron.css" />
+    <link rel="stylesheet" href="tools/jar/jar.css" />
   </head>
   <body>
     <div class="container">
-      <h1>JSON 工具箱</h1>
+      <h1>开发工具箱</h1>
       <div class="tabs">
         <button id="tab-json" class="tab-btn active">JSON</button>
         <button id="tab-cron" class="tab-btn">Cron</button>
+        <button id="tab-jar" class="tab-btn">JAR 运行</button>
       </div>
       <div id="panel-json" class="panel active">
         <div class="toolbar">
@@ -254,7 +117,77 @@
         </div>
         <div id="status-cron" class="status"></div>
       </div>
+      <div id="panel-jar" class="panel">
+        <div class="jar-fields">
+          <div class="jar-field">
+            <label for="jar-path">JAR 路径（本地绝对或相对路径）</label>
+            <input
+              id="jar-path"
+              type="text"
+              placeholder="/path/to/app.jar"
+              spellcheck="false"
+            />
+          </div>
+          <div class="jar-field">
+            <label for="jar-java">Java 可执行文件（可选，默认在 PATH 中查找 java）</label>
+            <input
+              id="jar-java"
+              type="text"
+              placeholder="java 或 /Library/Java/JavaVirtualMachines/.../bin/java"
+              spellcheck="false"
+            />
+          </div>
+          <div class="jar-field">
+            <label for="jar-cwd">工作目录（可选）</label>
+            <input id="jar-cwd" type="text" placeholder="留空则使用应用启动目录" spellcheck="false" />
+          </div>
+          <div class="jar-field">
+            <label for="jar-jvm-args">JVM 参数（可选，每行一个）</label>
+            <textarea
+              id="jar-jvm-args"
+              rows="3"
+              placeholder="-Xmx512m&#10;-Dfile.encoding=UTF-8"
+              spellcheck="false"
+            ></textarea>
+            <div class="hint">会按顺序插入在「java」与「-jar」之间，例如内存、系统属性等。</div>
+          </div>
+          <div class="jar-field">
+            <label for="jar-program-args">程序参数（每行一个）</label>
+            <textarea
+              id="jar-program-args"
+              rows="4"
+              placeholder="--help&#10;input.txt"
+              spellcheck="false"
+            ></textarea>
+            <div class="hint">对应命令行中 jar 文件名之后的参数；含空格的值请单独占一行。</div>
+          </div>
+          <div class="jar-field">
+            <label for="jar-timeout">超时（秒，可选）</label>
+            <input
+              id="jar-timeout"
+              type="text"
+              inputmode="numeric"
+              placeholder="留空表示不限制"
+              spellcheck="false"
+            />
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="jar-run-btn">运行</button>
+          <button id="jar-clear-btn" class="secondary">清空表单</button>
+        </div>
+        <div class="jar-output-wrap">
+          <label for="jar-output" style="font-size: 12px; color: #c9d1e2">执行输出</label>
+          <textarea
+            id="jar-output"
+            placeholder="运行结果（stdout / stderr）会显示在这里..."
+            spellcheck="false"
+            readonly
+          ></textarea>
+        </div>
+        <div id="status-jar" class="status"></div>
+      </div>
     </div>
-    <script src="../dist/renderer.js"></script>
+    <script type="module" src="../dist/renderer.js"></script>
   </body>
 </html>

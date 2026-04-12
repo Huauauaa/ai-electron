@@ -6,7 +6,7 @@
   "author": "ai-electron",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b",
     "clean": "rm -rf dist",
     "prestart": "npm run build",
     "prepack": "npm run build",
@@ -39,6 +39,8 @@
     "files": [
       "dist/**/*",
       "src/index.html",
+      "src/app.css",
+      "src/tools/**/*.css",
       "package.json"
     ],
     "asar": true,

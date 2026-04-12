@@ -4,3 +4,6 @@ dist
 *.tmp
 *.swp
 .DS_Store
+*.class
+*.tsbuildinfo
+demos/**/MANIFEST.MF
