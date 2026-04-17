@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 import type { JarRunRequest, JarRunResult } from "./preload";
+import { registerWorkHourIpc } from "./workhour/workhour-ipc";
 
 const MAX_OUTPUT_CHARS = 512_000;
 
@@ -155,6 +156,7 @@ function createWindow(): void {
 
 app.whenReady().then(() => {
   registerJarRunnerIpc();
+  registerWorkHourIpc();
   createWindow();
 
   app.on("activate", () => {

@@ -1,5 +1,11 @@
 import { contextBridge, ipcRenderer } from "electron";
 
+import type {
+  WorkHourListResult,
+  WorkHourRefreshRequest,
+  WorkHourRefreshResult,
+} from "./shared/workhour-types.js";
+
 export type JarRunRequest = {
   jarPath: string;
   jvmArgs: string[];
@@ -20,4 +26,10 @@ export type JarRunResult = {
 contextBridge.exposeInMainWorld("jarRunner", {
   runJar: (request: JarRunRequest): Promise<JarRunResult> =>
     ipcRenderer.invoke("jar:run", request),
+});
+
+contextBridge.exposeInMainWorld("workHourTool", {
+  list: (): Promise<WorkHourListResult> => ipcRenderer.invoke("workhour:list"),
+  refresh: (request: WorkHourRefreshRequest): Promise<WorkHourRefreshResult> =>
+    ipcRenderer.invoke("workhour:refresh", request),
 });

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="tools/json/json.css" />
     <link rel="stylesheet" href="tools/cron/cron.css" />
     <link rel="stylesheet" href="tools/jar/jar.css" />
+    <link rel="stylesheet" href="tools/workhour/workhour.css" />
   </head>
   <body>
     <div class="container">
@@ -20,6 +21,7 @@
         <button id="tab-json" class="tab-btn active">JSON</button>
         <button id="tab-cron" class="tab-btn">Cron</button>
         <button id="tab-jar" class="tab-btn">JAR 运行</button>
+        <button id="tab-workhour" class="tab-btn">工时</button>
       </div>
       <div id="panel-json" class="panel active">
         <div class="toolbar">
@@ -186,6 +188,42 @@
           ></textarea>
         </div>
         <div id="status-jar" class="status"></div>
+      </div>
+      <div id="panel-workhour" class="panel panel-workhour">
+        <div class="workhour-fields">
+          <div class="workhour-field">
+            <label for="workhour-login-url">登录页 URL（用于获取 Cookie）</label>
+            <input
+              id="workhour-login-url"
+              type="text"
+              placeholder="https://example.com/login"
+              spellcheck="false"
+            />
+          </div>
+          <div class="workhour-field">
+            <label for="workhour-api-url">工时接口 URL</label>
+            <input
+              id="workhour-api-url"
+              type="text"
+              placeholder="https://example.com/api/attendance/..."
+              spellcheck="false"
+            />
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="workhour-refresh-btn" type="button">刷新拉取</button>
+        </div>
+        <div class="workhour-hint">
+          流程：先请求登录页收集 Set-Cookie，再携带 Cookie 请求工时接口；返回的 JSON
+          数组会写入用户目录下的 SQLite（workhour.sqlite），表格展示本地缓存。
+        </div>
+        <div class="workhour-table-wrap">
+          <table class="workhour-table" aria-label="工时记录">
+            <thead id="workhour-table-head"></thead>
+            <tbody id="workhour-table-body"></tbody>
+          </table>
+        </div>
+        <div id="status-workhour" class="status"></div>
       </div>
     </div>
     <script type="module" src="../dist/renderer.js"></script>

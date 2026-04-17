@@ -1,0 +1,72 @@
+.panel-workhour {
+  gap: 10px;
+}
+
+.workhour-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workhour-field label {
+  display: block;
+  font-size: 12px;
+  color: #c9d1e2;
+  margin-bottom: 4px;
+}
+
+.workhour-field input[type="text"] {
+  font-size: 13px;
+}
+
+.workhour-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #3f4659;
+  border-radius: 8px;
+  background: #252b38;
+}
+
+.workhour-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.workhour-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #323848;
+  color: #e6e6e6;
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #3f4659;
+  white-space: nowrap;
+}
+
+.workhour-table tbody td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #323848;
+  color: #e6e6e6;
+  vertical-align: top;
+  max-width: 220px;
+  word-break: break-word;
+}
+
+.workhour-table tbody tr:hover {
+  background: #2a3040;
+}
+
+.workhour-empty {
+  padding: 16px;
+  color: #9aa4b5;
+  font-size: 13px;
+}
+
+.workhour-hint {
+  font-size: 12px;
+  color: #9aa4b5;
+  line-height: 1.4;
+}
